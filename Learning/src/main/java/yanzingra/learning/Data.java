@@ -1,14 +1,14 @@
-package YanZingra.Learning;
+package yanzingra.learning;
 
 public class Data {
     public String name;
     String function;
     Integer age;
 
-    public Data (String name, String function, Integer age){
-        this.name=name;
-        this.function=function;
-        this.age=age;
+    public Data(String name, String function, Integer age) {
+        this.name = name;
+        this.function = function;
+        this.age = age;
     }
 
     public String getName() {
