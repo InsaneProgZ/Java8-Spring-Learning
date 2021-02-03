@@ -32,7 +32,7 @@ public class Controller {
     }
 
     @DeleteMapping("/delete")
-    public Boolean delete(@RequestBody List<Data> data) {
+    public List<Data> delete(@RequestBody List<Data> data) {
 
         return repository.delete(data);
 

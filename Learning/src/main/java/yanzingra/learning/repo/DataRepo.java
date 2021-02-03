@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class DataRepo {
@@ -22,13 +21,18 @@ public class DataRepo {
         this.data.addAll(data);
     }
 
-    public Boolean delete(List<Data> data) {
+    public List<Data> delete(List<Data> data) {
 
-        this.data.stream().flatMap(names ->
-                (data.stream().map(name -> name.name).collect(Collectors.toList())).stream().filter(filter ->
-                        filter.equals(names.name))).iterator().remove();
+        this.data.removeIf(dell -> {
+            for (Data deleteDatas : data) {
+                if (dell.getName().equals(deleteDatas.getName())) {
+                    return true;
+                }
+            }
+            return false;
+        });
 
-        return true;
+        return data;
 
     }
 

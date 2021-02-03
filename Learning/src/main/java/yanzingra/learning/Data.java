@@ -1,7 +1,7 @@
 package yanzingra.learning;
 
 public class Data {
-    public String name;
+    String name;
     String function;
     Integer age;
 
