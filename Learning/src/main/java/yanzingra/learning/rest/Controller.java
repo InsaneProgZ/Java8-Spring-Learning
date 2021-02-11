@@ -22,7 +22,7 @@ public class Controller {
 
     @GetMapping("/show")
     public ResponseEntity<Iterable<UserData>> showDataBase() {
-        userDAO.
+
         return new ResponseEntity<>(userDAO.findAll(), HttpStatus.OK);
 
     }
