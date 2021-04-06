@@ -1,7 +1,8 @@
 package yanzingra.learning.repo;
 
-import yanzingra.learning.Data;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
+import yanzingra.learning.model.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,32 +11,53 @@ import java.util.stream.Collectors;
 @Repository
 public class StaticDataRepo {
 
-    List<Data> data;
+    List<UserData> data = new ArrayList<>();
 
     public StaticDataRepo() {
 
         this.data = new ArrayList<>();
     }
 
-    public void save(List<Data> data) {
+    public Boolean save(List<UserData> data) {
 
-        this.data.addAll(data);
+        try{
+            this.data.addAll(data);
+            return true;
+        } catch (Exception saveErrorException) {
+
+            throw saveErrorException;
+        }
+
+    }
+    public Boolean save(UserData data) {
+
+        try{
+            this.data.add(data);
+            return true;
+        } catch (Exception saveErrorException) {
+
+            throw saveErrorException;
+        }
+
     }
 
-    public List<Data> delete(List<Data> data) {
+    public Boolean delete(List<UserData> data) {
 
-        List<Data> toDeleteData =this.data.stream()
+        List<UserData> toDeleteData =this.data.stream()
                 .filter(f -> data.stream()
-                        .map(Data::getName)
+                        .map(UserData::getName)
                         .collect(Collectors.toList()).contains(f.getName()))
                 .collect(Collectors.toList());
-        this.data.removeAll(toDeleteData);
-
-        return data;
+        try {
+            this.data.removeAll(toDeleteData);
+            return true;
+        } catch (Exception cantRemoveException) {
+            throw  cantRemoveException;
+        }
 
     }
 
-    public List<Data> getData() {
+    public List<UserData> getData() {
         return data;
     }
 }
