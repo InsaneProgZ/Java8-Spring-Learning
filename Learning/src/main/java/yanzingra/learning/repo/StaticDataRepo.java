@@ -1,9 +1,9 @@
 package yanzingra.learning.repo;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.HttpClientErrorException;
 import yanzingra.learning.model.UserData;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,53 +11,34 @@ import java.util.stream.Collectors;
 @Repository
 public class StaticDataRepo {
 
-    List<UserData> data = new ArrayList<>();
+    List<UserData> dataList;
 
     public StaticDataRepo() {
 
-        this.data = new ArrayList<>();
+        this.dataList = new ArrayList<>();
     }
 
-    public Boolean save(List<UserData> data) {
+    public Boolean saveUser(UserData data) {
+        boolean dataToSave = dataList.stream().anyMatch(p -> p.getRg().equals(data.getRg()));
 
-        try{
-            this.data.addAll(data);
-            return true;
-        } catch (Exception saveErrorException) {
-
-            throw saveErrorException;
-        }
-
-    }
-    public Boolean save(UserData data) {
-
-        try{
-            this.data.add(data);
-            return true;
-        } catch (Exception saveErrorException) {
-
-            throw saveErrorException;
-        }
-
+        if (dataToSave) return false;
+        return dataList.add(data);
     }
 
-    public Boolean delete(List<UserData> data) {
+    public Boolean deleteUser(Integer id) {
+        List<UserData> dataListToDelete = this.dataList.stream()
+                .filter(data -> data.getAge().equals(id)).collect(Collectors.toList());
+        return dataList.removeAll(dataListToDelete);
+    }
 
-        List<UserData> toDeleteData =this.data.stream()
-                .filter(f -> data.stream()
-                        .map(UserData::getName)
-                        .collect(Collectors.toList()).contains(f.getName()))
+    public List<UserData> getUser() {
+        return dataList;
+    }
+
+    public void changeUser (UserData data, Integer id){
+        dataList = dataList.stream()
+                .filter( dataFilter -> dataFilter.getRg().equals(BigDecimal.valueOf(id)))
+                .map(d -> d=data)
                 .collect(Collectors.toList());
-        try {
-            this.data.removeAll(toDeleteData);
-            return true;
-        } catch (Exception cantRemoveException) {
-            throw  cantRemoveException;
-        }
-
-    }
-
-    public List<UserData> getData() {
-        return data;
     }
 }

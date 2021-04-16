@@ -1,20 +1,23 @@
 package yanzingra.learning.rest;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import yanzingra.learning.model.UserData;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import yanzingra.learning.model.UserData;
 import yanzingra.learning.repo.StaticDataRepo;
 
 import javax.validation.Valid;
-import java.util.List;
 
 
 @RestController
+@RequestMapping("/user")
 public class Controller {
-
+    // TODO(Criar atualização de tabela de objeto inteiro (PUT) e de parte de um objeto (PATCH) (Atrelar ao ID)
+    // TODO(JSON PATCH)
+    // TODO(HATEOAS)
+    // TODO(Tratamento de exceções com o @ControllerAdvice)
+    // TODO((Checked x Unchecked) exceptions)
     @Autowired
     private final StaticDataRepo userDAO;
 
@@ -22,46 +25,33 @@ public class Controller {
         this.userDAO = userDAO;
     }
 
-    @GetMapping(name = "/show", produces = {"application/json", "application/xml"})
-    public ResponseEntity<Iterable<UserData>> showDataBase() {
+    @GetMapping(produces = {"application/json", "application/xml"})
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<UserData> showDataBase() {
 
-        List<UserData> userDataList = userDAO.getData();
-
-        return userDataList.isEmpty() ? new ResponseEntity<>(userDataList, HttpStatus.NO_CONTENT) :
-                new ResponseEntity<>(userDataList, HttpStatus.OK);
-
+        return userDAO.getUser();
     }
 
-    @PatchMapping("/save")
-    public ResponseEntity<Boolean> saveMultiple(@RequestBody List<UserData> data) {
 
-        try{
-            return new ResponseEntity<>(userDAO.save(data) ,HttpStatus.CREATED);
+    @PostMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public boolean saveSingle(@RequestBody @Valid UserData data) {
 
-        } catch(Exception saveErrorException) {
-            return new ResponseEntity<>(userDAO.save(data) ,HttpStatus.INTERNAL_SERVER_ERROR);
-
-        }
+        return userDAO.saveUser(data);
     }
 
-    @PutMapping("/save")
-    public ResponseEntity<Boolean> saveSingle(@RequestBody @Valid UserData data) {
-        try{
-            return new ResponseEntity<>(userDAO.save(data) ,HttpStatus.CREATED);
 
-        } catch(Exception saveErrorException) {
-            return new ResponseEntity<>(userDAO.save(data) ,HttpStatus.INTERNAL_SERVER_ERROR);
+    @DeleteMapping("/{rg}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean delete(@PathVariable("rg") Integer rg) {
 
-        }
+            return userDAO.deleteUser(rg);
+    }
+    @PutMapping("/{rg}")
+    @ResponseStatus(HttpStatus.OK)
+    public void changeObjetc (@PathVariable("rg") Integer rg, @RequestBody @Valid UserData data) {
+       userDAO.changeUser(data, rg);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Boolean> delete(@RequestBody List<UserData> data) {
-        try {
-            return new ResponseEntity<>(userDAO.delete(data), HttpStatus.OK);
-        } catch (Exception cantDeleteException){
-            return new ResponseEntity<>(userDAO.delete(data), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
 }

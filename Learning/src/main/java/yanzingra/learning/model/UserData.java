@@ -24,13 +24,13 @@ public class UserData {
 
     @NotNull
     @Positive
-    @JsonProperty("saldo")
-    private BigDecimal balance;
+    @JsonProperty("rg")
+    private BigDecimal rg;
 
-    public UserData(String name, Integer age, BigDecimal balance) {
+    public UserData(String name, Integer age, BigDecimal rg) {
         this.name = name;
         this.age = age;
-        this.balance = balance;
+        this.rg = rg;
     }
 
     public String getName() {
@@ -41,12 +41,12 @@ public class UserData {
         this.name = name;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public BigDecimal getRg() {
+        return rg;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setBalance(BigDecimal rg) {
+        this.rg = rg;
     }
 
     public Integer getAge() {
