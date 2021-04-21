@@ -3,7 +3,6 @@ package yanzingra.learning.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -27,10 +26,13 @@ public class UserData {
     @JsonProperty("rg")
     private BigDecimal rg;
 
+
     public UserData(String name, Integer age, BigDecimal rg) {
         this.name = name;
         this.age = age;
         this.rg = rg;
+    }
+    public UserData() {
     }
 
     public String getName() {
@@ -45,7 +47,7 @@ public class UserData {
         return rg;
     }
 
-    public void setBalance(BigDecimal rg) {
+    public void setRg(BigDecimal rg) {
         this.rg = rg;
     }
 
