@@ -1,13 +1,12 @@
-package Learning.SpringBoot.controller;
+package Learning.springboot.controller;
 
-import Learning.SpringBoot.model.UserData;
-import Learning.SpringBoot.repository.UserDataRepository;
-import com.sun.tools.javac.Main;
+import Learning.springboot.model.UserData;
+import Learning.springboot.repository.UserDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -36,20 +35,17 @@ public class MainController {
 
     @GetMapping(produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.OK)
-    public List<UserData> showDataBase() {
+    public CollectionModel<UserData> showDataBase() {
         List<UserData> users = new ArrayList<>();
 
-        for (UserData userData : userDAO.getUser())
-        {
+        for (UserData userData : userDAO.getUser()) {
             userData.add(linkTo(methodOn(MainController.class).showDataId()).withRel("UserData"));
-
             users.add(userData);
         }
 
-        //Link selfLink = linkTo(methodOn(Controller.class).showDataBase()).withSelfRel();
+        var selfLink = linkTo(methodOn(MainController.class).showDataBase()).withSelfRel();
 
-
-        return users;
+        return CollectionModel.of(users, selfLink);
     }
 
     @GetMapping(value = "/id")
@@ -72,22 +68,22 @@ public class MainController {
 
         return userDAO.deleteUser(rg);
     }
+
     @PutMapping("/{rg}")
     @ResponseStatus(HttpStatus.OK)
-    public void changeObject (@PathVariable("rg") Integer rg, @RequestBody @Valid UserData data) {
+    public void changeObject(@PathVariable("rg") Integer rg, @RequestBody @Valid UserData data) {
         userDAO.changeUser(data, rg);
     }
 
     @PatchMapping("/{rg}")
     @ResponseStatus(HttpStatus.OK)
-    public void changePartObject (@PathVariable("rg") Integer rg, @RequestBody UserData data) {
+    public void changePartObject(@PathVariable("rg") Integer rg, @RequestBody UserData data) {
         userDAO.partChangeUser(data, rg);
     }
 
-//    @PatchMapping(path = "/{rg}/jsonPatch", consumes = "application/json-patch+json")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void changePartObjectJsonPatch (@PathVariable("rg") Integer rg, @RequestBody JsonPatch patchDocument) {
-//        userDAO.partChangeUserJsonPatch(patchDocument, rg);
-//    }
-
+/*    @PatchMapping(path = "/{rg}/jsonPatch", consumes = "application/json-patch+json")
+    @ResponseStatus(HttpStatus.OK)
+    public void changePartObjectJsonPatch (@PathVariable("rg") Integer rg, @RequestBody JsonPatch patchDocument) {
+        userDAO.partChangeUserJsonPatch(patchDocument, rg);
+    }*/
 }

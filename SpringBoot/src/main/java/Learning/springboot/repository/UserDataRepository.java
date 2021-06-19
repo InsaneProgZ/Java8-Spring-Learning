@@ -1,7 +1,7 @@
-package Learning.SpringBoot.repository;
+package Learning.springboot.repository;
 
 
-import Learning.SpringBoot.model.UserData;
+import Learning.springboot.model.UserData;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
