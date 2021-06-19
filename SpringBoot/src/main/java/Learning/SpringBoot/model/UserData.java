@@ -1,6 +1,7 @@
 package Learning.SpringBoot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.stereotype.Repository;
 
@@ -9,8 +10,8 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-@Repository
-public class UserData {
+
+public class UserData extends RepresentationModel {
 
     @NotNull
     @Size(min = 1, max = 20)

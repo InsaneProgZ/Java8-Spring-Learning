@@ -19,11 +19,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/user")
 public class MainController {
-    // TODO(Criar atualização de tabela de objeto inteiro (PUT) e de parte de um objeto (PATCH) (Atrelar ao ID)   DONE
+    // TODO(Criar atualizacao de tabela de objeto inteiro (PUT) e de parte de um objeto (PATCH) (Atrelar ao ID)   DONE
     // TODO(JSON PATCH) DONE MELHORAR
     // TODO(HATEOAS)
     // TODO((Checked x Unchecked) exceptions) DONE
-    // TODO(Tratamento de exceções com o @ControllerAdvice)
+    // TODO(Tratamento de excecoes com o @ControllerAdvice)
     // TODO(reflection java)
     // TODO(LOGS)
 
@@ -41,7 +41,7 @@ public class MainController {
 
         for (UserData userData : userDAO.getUser())
         {
-            //userData.add(linkTo(methodOn(MainController.class).showDataId()).withRel("UserData"));
+            userData.add(linkTo(methodOn(MainController.class).showDataId()).withRel("UserData"));
 
             users.add(userData);
         }
@@ -54,17 +54,16 @@ public class MainController {
 
     @GetMapping(value = "/id")
     @ResponseStatus(HttpStatus.OK)
-    public List<UserData> showDataId() {
+    public UserData showDataId() {
 
-        //userData.add(linkTo(methodOn(Controller.class).delete(id)));
         return userDAO.getUser(1);
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)
-    public void saveSingle(@RequestBody @Valid UserData data) {
+    public void saveMultiple(@RequestBody @Valid List<UserData> data) {
 
-        userDAO.saveUser(data);
+        userDAO.saveUsers(data);
     }
 
     @DeleteMapping("/{rg}")

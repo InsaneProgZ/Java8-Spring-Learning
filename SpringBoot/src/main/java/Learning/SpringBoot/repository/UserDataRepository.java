@@ -2,22 +2,32 @@ package Learning.SpringBoot.repository;
 
 
 import Learning.SpringBoot.model.UserData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Repository
+@Service
 public class UserDataRepository {
 
-    @Autowired
-    List<UserData> dataList;
+    private List<UserData> dataList;
 
-    public void saveUser(UserData data) {
+    public UserDataRepository(List<UserData> dataList) {
+        this.dataList = dataList;
+    }
 
-//       boolean dataToSave = dataList.stream().anyMatch(p -> p.getRg().equals(data.getRg()));
-        dataList.add(data);
+    public void saveUsers(List<UserData> data) {
+        boolean dataExists = false;
+
+        for (UserData userData : dataList) {
+            if (dataList.stream().anyMatch(d -> d.getRg().equals(userData.getRg()))) {
+                dataExists = true;
+                break;
+            }
+        }
+        if (!dataExists) {
+            dataList.addAll(data);
+        }
     }
 
     public Boolean deleteUser(Integer id) {
@@ -26,13 +36,16 @@ public class UserDataRepository {
         return dataList.removeAll(dataListToDelete);
     }
 
-    public List<UserData> getUser() { return dataList; }
-
-    public List<UserData> getUser(Integer rg){
-
-        return dataList.stream().filter( d -> d.getRg().equals(rg)).collect(Collectors.toList());
+    public List<UserData> getUser() {
+        return dataList;
     }
 
+    public UserData getUser(Integer rg) {
+
+        List<UserData> users = dataList.stream().filter(d -> d.getRg().equals(rg)).collect(Collectors.toList());
+
+        return users.isEmpty() ? null : users.get(0);
+    }
 
     public List<UserData> getUserById(Integer rg) {
 
@@ -52,14 +65,12 @@ public class UserDataRepository {
     }
 
     public void partChangeUser(UserData data, Integer rg) {
-        dataList = dataList.stream()
-                .peek(d -> {
-                    if (d.getRg().equals(rg)) {
-                        if (data.getName() != null) d.setName(data.getName());
-                        if (data.getAge() != null) d.setAge(data.getAge());
-                        if (data.getRg() != null) d.setRg(data.getRg());
-                    }
-                })
-                .collect(Collectors.toList());
+        dataList.forEach(d -> {
+            if (d.getRg().equals(rg)) {
+                if (data.getName() != null) d.setName(data.getName());
+                if (data.getAge() != null) d.setAge(data.getAge());
+                if (data.getRg() != null) d.setRg(data.getRg());
+            }
+        });
     }
 }
