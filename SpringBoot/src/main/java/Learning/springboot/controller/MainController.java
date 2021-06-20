@@ -3,8 +3,7 @@ package Learning.springboot.controller;
 import Learning.springboot.model.UserData;
 import Learning.springboot.repository.UserDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.Link;
+import org.springframework.hateoas.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +18,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/user")
 public class MainController {
     // TODO(Criar atualizacao de tabela de objeto inteiro (PUT) e de parte de um objeto (PATCH) (Atrelar ao ID)   DONE
-    // TODO(JSON PATCH) DONE MELHORAR
-    // TODO(HATEOAS)
+    // TODO(JSON PATCH) DONE MELHORAR/REIMPLEMENTAR
+    // TODO(HATEOAS) DONE
     // TODO((Checked x Unchecked) exceptions) DONE
     // TODO(Tratamento de excecoes com o @ControllerAdvice)
     // TODO(reflection java)
@@ -39,7 +38,7 @@ public class MainController {
         List<UserData> users = new ArrayList<>();
 
         for (UserData userData : userDAO.getUser()) {
-            userData.add(linkTo(methodOn(MainController.class).showDataId()).withRel("UserData"));
+            userData.add(linkTo(methodOn(MainController.class).showDataId(userData.getRg())).withRel("/user/{rg}"));
             users.add(userData);
         }
 
@@ -48,11 +47,13 @@ public class MainController {
         return CollectionModel.of(users, selfLink);
     }
 
-    @GetMapping(value = "/id")
+    @GetMapping(value = "/{rg}")
     @ResponseStatus(HttpStatus.OK)
-    public UserData showDataId() {
+    public EntityModel<UserData> showDataId( @PathVariable int rg) {
+        var user = userDAO.getUser(rg);
+        user.add(linkTo(methodOn(MainController.class).showDataBase()).withRel("/user"));
 
-        return userDAO.getUser(1);
+        return EntityModel.of(user);
     }
 
     @PostMapping()

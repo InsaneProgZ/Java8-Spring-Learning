@@ -17,7 +17,7 @@ public class UserDataRepository {
     }
 
     public void saveUsers(List<UserData> data) {
-        boolean dataExists = false;
+        var dataExists = false;
 
         for (UserData userData : dataList) {
             if (dataList.stream().anyMatch(d -> d.getRg().equals(userData.getRg()))) {
