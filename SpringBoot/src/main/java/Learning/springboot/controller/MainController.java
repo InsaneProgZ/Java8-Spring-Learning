@@ -2,9 +2,14 @@ package Learning.springboot.controller;
 
 import Learning.springboot.model.UserData;
 import Learning.springboot.repository.UserDataRepository;
+import Learning.springboot.util.UtilMethods;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,8 +33,12 @@ public class MainController {
     @Autowired
     private final UserDataRepository userDAO;
 
-    public MainController(UserDataRepository userDAO) {
+    @Autowired
+    private final UtilMethods utilMethods;
+
+    public MainController(UserDataRepository userDAO, UtilMethods utilMethods) {
         this.userDAO = userDAO;
+        this.utilMethods = utilMethods;
     }
 
     @GetMapping(produces = {"application/json", "application/xml"})
@@ -76,11 +85,23 @@ public class MainController {
         userDAO.changeUser(data, rg);
     }
 
-    @PatchMapping("/{rg}")
-    @ResponseStatus(HttpStatus.OK)
-    public void changePartObject(@PathVariable("rg") Integer rg, @RequestBody UserData data) {
-        userDAO.partChangeUser(data, rg);
+//    @PatchMapping("/{rg}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public void changePartObject(@PathVariable("rg") Integer rg, @RequestBody UserData data) {
+//        userDAO.partChangeUser(data, rg);
+//    }
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<UserData> updateCustomer(@PathVariable int id, @RequestBody JsonPatch patch) {
+        try {
+            UserData customer = userDAO.getUser(id);
+            UserData customerPatched = utilMethods.applyPatchToCustomer(patch, customer);
+            userDAO.changeUser(customerPatched, id);
+            return ResponseEntity.ok(customerPatched);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
 
 /*    @PatchMapping(path = "/{rg}/jsonPatch", consumes = "application/json-patch+json")
     @ResponseStatus(HttpStatus.OK)
