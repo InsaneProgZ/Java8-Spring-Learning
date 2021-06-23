@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class UserDataRepository {
 
     @Resource(name = "userList")
-   // @Valid
     private List<UserData> dataList;
 
     public void saveUsers(@NotBlank @NotNull List<UserData> data) {
@@ -31,7 +30,7 @@ public class UserDataRepository {
         if (!dataExists) {
             dataList.addAll(data);
         } else {
-            throw new KeyAlreadyExistsException("Este RG já foi registrado no sistema senhor, ta tentando me enganar?");
+            throw new KeyAlreadyExistsException("Este RG ja foi registrado no sistema senhor, ta tentando me enganar?");
         }
     }
 
@@ -41,7 +40,7 @@ public class UserDataRepository {
         return dataList.removeAll(dataListToDelete);
     }
 
-    public List<UserData> getUser() {
+    public List<UserData> getUsers() {
         return dataList;
     }
 
@@ -65,14 +64,13 @@ public class UserDataRepository {
                     if (d.getRg().equals(rg))
                         return data;
                     return d;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
     }
 
-    public void partChangeUser(UserData data, Integer rg) {
+    public void partChangeUserWithoutPatch(UserData data, Integer rg) {
         dataList.forEach(d -> {
             if (d.getRg().equals(rg)) {
-                if (data.getName() != null) d.setName(data.getName());
+                if (data.getName() != null) d. setName(data.getName());
                 if (data.getAge() != null) d.setAge(data.getAge());
                 if (data.getRg() != null) d.setRg(data.getRg());
             }

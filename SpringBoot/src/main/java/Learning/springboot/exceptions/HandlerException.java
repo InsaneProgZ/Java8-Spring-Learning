@@ -12,6 +12,6 @@ public class HandlerException {
     @ExceptionHandler
     public String handlerException(Exception exception) {
 
-        return exception.getMessage()+" -> Essa exception foi lançada através do RestControllerAdvice";
+        return exception.getMessage() + " -> Essa exception foi lançada através do RestControllerAdvice";
     }
 }

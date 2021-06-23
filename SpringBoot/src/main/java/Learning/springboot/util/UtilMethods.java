@@ -15,9 +15,9 @@ public class UtilMethods {
     @Autowired
     ObjectMapper objectMapper;
 
-    public UserData applyPatchToCustomer(JsonPatch patch, UserData targetCustomer) throws JsonPatchException, JsonProcessingException {
+    public UserData applyPatchToCustomer(JsonPatch patch, UserData userData) throws JsonPatchException, JsonProcessingException {
 
-        JsonNode patched = patch.apply(objectMapper.convertValue(targetCustomer, JsonNode.class));
+        JsonNode patched = patch.apply(objectMapper.convertValue(userData, JsonNode.class));
 
         return objectMapper.treeToValue(patched, UserData.class);
     }

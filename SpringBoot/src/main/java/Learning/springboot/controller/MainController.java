@@ -6,8 +6,12 @@ import Learning.springboot.util.UtilMethods;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.*;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,14 +26,15 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/user")
 @Validated
+@AllArgsConstructor()
 public class MainController {
     // TODO(Criar atualizacao de tabela de objeto inteiro (PUT) e de parte de um objeto (PATCH) (Atrelar ao ID)   DONE
     // TODO(JSON PATCH) DONE MELHORAR/REIMPLEMENTAR DONE
     // TODO(HATEOAS) DONE
     // TODO((Checked x Unchecked) exceptions) DONE
     // TODO(Tratamento de excecoes com o @ControllerAdvice) DONE
-    // TODO(reflection java)
-    // TODO(LOGS)
+    // TODO(reflection java) Não entendi o ganho, nem a necessidade. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // TODO(LOGS) DONE
 
     @Autowired
     private final UserDataRepository userDAO;
@@ -37,10 +42,8 @@ public class MainController {
     @Autowired
     private final UtilMethods utilMethods;
 
-    public MainController(UserDataRepository userDAO, UtilMethods utilMethods) {
-        this.userDAO = userDAO;
-        this.utilMethods = utilMethods;
-    }
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     @GetMapping(produces = {"application/hal+json"})
     @ResponseStatus(HttpStatus.OK)
@@ -48,11 +51,11 @@ public class MainController {
 
         var selfLink = linkTo(methodOn(MainController.class).showDataBase()).withSelfRel();
 
-        return CollectionModel.of(userDAO.getUser(), selfLink);
+        return CollectionModel.of(userDAO.getUsers(), selfLink);
     }
 
     @GetMapping(value = "/{rg}")
-    public EntityModel<UserData> showDataId( @PathVariable int rg) {
+    public EntityModel<UserData> showDataId(@PathVariable int rg) {
         var user = userDAO.getUser(rg);
         user.add(linkTo(methodOn(MainController.class).showDataBase()).withRel("/user"));
 
@@ -62,8 +65,9 @@ public class MainController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void saveMultiple(@RequestBody @Valid List<UserData> data) {
-
+        logger.trace("test");
         userDAO.saveUsers(data);
+        logger.info("Se esta lendo isso, essas informacoes foram salvas : {} ", data );
     }
 
     @DeleteMapping("/{rg}")
@@ -78,13 +82,8 @@ public class MainController {
         userDAO.changeUser(data, rg);
     }
 
-//    @PatchMapping("/{rg}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void changePartObject(@PathVariable("rg") Integer rg, @RequestBody UserData data) {
-//        userDAO.partChangeUser(data, rg);
-//    }
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<UserData> updateCustomer(@PathVariable int id, @RequestBody JsonPatch patch) {
+    public ResponseEntity<UserData> updateCustomer(@PathVariable Integer id, @RequestBody JsonPatch patch) {
         try {
             UserData customer = userDAO.getUser(id);
             UserData customerPatched = utilMethods.applyPatchToCustomer(patch, customer);
@@ -94,11 +93,4 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
-
-/*    @PatchMapping(path = "/{rg}/jsonPatch", consumes = "application/json-patch+json")
-    @ResponseStatus(HttpStatus.OK)
-    public void changePartObjectJsonPatch (@PathVariable("rg") Integer rg, @RequestBody JsonPatch patchDocument) {
-        userDAO.partChangeUserJsonPatch(patchDocument, rg);
-    }*/
 }
