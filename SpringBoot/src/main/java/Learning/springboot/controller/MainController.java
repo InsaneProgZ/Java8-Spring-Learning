@@ -10,23 +10,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.executable.ValidateOnExecution;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/user")
+@Validated
 public class MainController {
     // TODO(Criar atualizacao de tabela de objeto inteiro (PUT) e de parte de um objeto (PATCH) (Atrelar ao ID)   DONE
-    // TODO(JSON PATCH) DONE MELHORAR/REIMPLEMENTAR
+    // TODO(JSON PATCH) DONE MELHORAR/REIMPLEMENTAR DONE
     // TODO(HATEOAS) DONE
     // TODO((Checked x Unchecked) exceptions) DONE
-    // TODO(Tratamento de excecoes com o @ControllerAdvice)
+    // TODO(Tratamento de excecoes com o @ControllerAdvice) DONE? Wornking, but @Valid doesn't works yet.
     // TODO(reflection java)
     // TODO(LOGS)
 
@@ -44,16 +51,10 @@ public class MainController {
     @GetMapping(produces = {"application/json", "application/xml"})
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<UserData> showDataBase() {
-        List<UserData> users = new ArrayList<>();
-
-        for (UserData userData : userDAO.getUser()) {
-            userData.add(linkTo(methodOn(MainController.class).showDataId(userData.getRg())).withRel("/user/{rg}"));
-            users.add(userData);
-        }
 
         var selfLink = linkTo(methodOn(MainController.class).showDataBase()).withSelfRel();
 
-        return CollectionModel.of(users, selfLink);
+        return CollectionModel.of(userDAO.getUser(), selfLink);
     }
 
     @GetMapping(value = "/{rg}")
@@ -67,7 +68,7 @@ public class MainController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)
-    public void saveMultiple(@RequestBody @Valid List<UserData> data) {
+    public void saveMultiple(@RequestBody List<@Valid UserData> data) {
 
         userDAO.saveUsers(data);
     }

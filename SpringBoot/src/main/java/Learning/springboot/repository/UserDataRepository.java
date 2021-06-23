@@ -4,22 +4,23 @@ package Learning.springboot.repository;
 import Learning.springboot.model.UserData;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserDataRepository {
 
+    @Resource(name = "userList")
     private List<UserData> dataList;
 
-    public UserDataRepository(List<UserData> dataList) {
-        this.dataList = dataList;
-    }
-
-    public void saveUsers(List<UserData> data) {
+    public void saveUsers(@NotBlank @NotNull List<UserData> data) {
         var dataExists = false;
 
-        for (UserData userData : dataList) {
+        for (UserData userData : data) {
             if (dataList.stream().anyMatch(d -> d.getRg().equals(userData.getRg()))) {
                 dataExists = true;
                 break;

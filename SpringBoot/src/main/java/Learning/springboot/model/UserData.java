@@ -2,14 +2,16 @@ package Learning.springboot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-
-public class UserData extends RepresentationModel {
+@Repository
+public class UserData extends RepresentationModel<UserData> {
 
     @NotNull
     @Size(min = 1, max = 20)
@@ -27,20 +29,12 @@ public class UserData extends RepresentationModel {
     @JsonProperty("rg")
     private Integer rg;
 
-    public UserData(String name, Integer age, Integer rg) {
-        this.name = name;
-        this.age = age;
-        this.rg = rg;
-    }
-
-    public UserData(){}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        UserData userData = (UserData) o;
+        var userData = (UserData) o;
         return Objects.equals(name, userData.name) && Objects.equals(age, userData.age) && Objects.equals(rg, userData.rg);
     }
 
