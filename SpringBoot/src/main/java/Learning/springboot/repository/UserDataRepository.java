@@ -2,22 +2,24 @@ package Learning.springboot.repository;
 
 
 import Learning.springboot.model.UserData;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
+import javax.management.openmbean.KeyAlreadyExistsException;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class UserDataRepository {
 
     @Resource(name = "userList")
+   // @Valid
     private List<UserData> dataList;
 
     public void saveUsers(@NotBlank @NotNull List<UserData> data) {
+
         var dataExists = false;
 
         for (UserData userData : data) {
@@ -28,6 +30,8 @@ public class UserDataRepository {
         }
         if (!dataExists) {
             dataList.addAll(data);
+        } else {
+            throw new KeyAlreadyExistsException("Este RG já foi registrado no sistema senhor, ta tentando me enganar?");
         }
     }
 

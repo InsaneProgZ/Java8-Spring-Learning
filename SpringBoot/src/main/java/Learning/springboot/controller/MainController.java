@@ -14,13 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.executable.ValidateOnExecution;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -33,7 +27,7 @@ public class MainController {
     // TODO(JSON PATCH) DONE MELHORAR/REIMPLEMENTAR DONE
     // TODO(HATEOAS) DONE
     // TODO((Checked x Unchecked) exceptions) DONE
-    // TODO(Tratamento de excecoes com o @ControllerAdvice) DONE? Wornking, but @Valid doesn't works yet.
+    // TODO(Tratamento de excecoes com o @ControllerAdvice) DONE
     // TODO(reflection java)
     // TODO(LOGS)
 
@@ -48,7 +42,7 @@ public class MainController {
         this.utilMethods = utilMethods;
     }
 
-    @GetMapping(produces = {"application/json", "application/xml"})
+    @GetMapping(produces = {"application/hal+json"})
     @ResponseStatus(HttpStatus.OK)
     public CollectionModel<UserData> showDataBase() {
 
@@ -58,7 +52,6 @@ public class MainController {
     }
 
     @GetMapping(value = "/{rg}")
-    @ResponseStatus(HttpStatus.OK)
     public EntityModel<UserData> showDataId( @PathVariable int rg) {
         var user = userDAO.getUser(rg);
         user.add(linkTo(methodOn(MainController.class).showDataBase()).withRel("/user"));
@@ -67,14 +60,13 @@ public class MainController {
     }
 
     @PostMapping()
-    @ResponseStatus(HttpStatus.OK)
-    public void saveMultiple(@RequestBody List<@Valid UserData> data) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void saveMultiple(@RequestBody @Valid List<UserData> data) {
 
         userDAO.saveUsers(data);
     }
 
     @DeleteMapping("/{rg}")
-    @ResponseStatus(HttpStatus.OK)
     public boolean delete(@PathVariable("rg") Integer rg) {
 
         return userDAO.deleteUser(rg);

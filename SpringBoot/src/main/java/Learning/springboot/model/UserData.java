@@ -2,7 +2,6 @@ package Learning.springboot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;

@@ -1,24 +1,24 @@
 package Learning.springboot.configuration;
 
 import Learning.springboot.model.UserData;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
-import org.springframework.hateoas.config.HypermediaRestTemplateConfigurer;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.hateoas.config.HypermediaMappingInformation;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@EnableWebMvc
-@EnableHypermediaSupport(type = {EnableHypermediaSupport.HypermediaType.HAL})
 public class ConfigurationGeneral {
 
     @Bean
-    RestTemplate restTemplate(HypermediaRestTemplateConfigurer configurer) {
-        return configurer.registerHypermediaTypes(new RestTemplate());
+    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder,
+                                     HypermediaMappingInformation mappingInformation) {
+        ObjectMapper objectMapper = builder.build();
+        mappingInformation.configureObjectMapper(objectMapper);
+        return objectMapper;
     }
 
     @Bean
