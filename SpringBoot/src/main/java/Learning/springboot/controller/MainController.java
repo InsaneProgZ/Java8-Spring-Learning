@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -28,13 +29,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Validated
 @AllArgsConstructor()
 public class MainController {
-    // TODO(Criar atualizacao de tabela de objeto inteiro (PUT) e de parte de um objeto (PATCH) (Atrelar ao ID)   DONE
-    // TODO(JSON PATCH) DONE MELHORAR/REIMPLEMENTAR DONE
-    // TODO(HATEOAS) DONE
-    // TODO((Checked x Unchecked) exceptions) DONE
-    // TODO(Tratamento de excecoes com o @ControllerAdvice) DONE
-    // TODO(reflection java) Não entendi o ganho, nem a necessidade. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // TODO(LOGS) DONE
 
     @Autowired
     private final UserDataRepository userDAO;
@@ -44,14 +38,18 @@ public class MainController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
     @GetMapping(produces = {"application/hal+json"})
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<UserData> showDataBase() {
+    public List <UserData> showDataBase() {
 
-        var selfLink = linkTo(methodOn(MainController.class).showDataBase()).withSelfRel();
+//        List<UserData> users = new ArrayList<>(userDAO.getUsers());
+//
+//        users.forEach(data -> data.add(linkTo(methodOn(MainController.class).showDataId(data.getRg())).withRel("get")));
+//
+//        var selfLink = linkTo(methodOn(MainController.class).showDataBase()).withSelfRel();
 
-        return CollectionModel.of(userDAO.getUsers(), selfLink);
+//        return CollectionModel.of(users, selfLink);
+       return userDAO.getUsers();
     }
 
     @GetMapping(value = "/{rg}")
@@ -65,15 +63,15 @@ public class MainController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void saveMultiple(@RequestBody @Valid List<UserData> data) {
-        logger.trace("test");
         userDAO.saveUsers(data);
-        logger.info("Se esta lendo isso, essas informacoes foram salvas : {} ", data );
+        logger.info("Se esta lendo isso, essas informacoes foram salvas : {} ", data);
     }
 
     @DeleteMapping("/{rg}")
-    public boolean delete(@PathVariable("rg") Integer rg) {
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("rg") Integer rg) {
 
-        return userDAO.deleteUser(rg);
+        userDAO.deleteUser(rg);
     }
 
     @PutMapping("/{rg}")
@@ -83,14 +81,14 @@ public class MainController {
     }
 
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<UserData> updateCustomer(@PathVariable Integer id, @RequestBody JsonPatch patch) {
+    public ResponseEntity<UserData> updateCustomer(@PathVariable Integer id, @RequestBody JsonPatch patch) throws JsonPatchException {
         try {
             UserData customer = userDAO.getUser(id);
             UserData customerPatched = utilMethods.applyPatchToCustomer(patch, customer);
             userDAO.changeUser(customerPatched, id);
             return ResponseEntity.ok(customerPatched);
         } catch (JsonPatchException | JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new JsonPatchException("JsonPatch exception");
         }
     }
 }

@@ -16,13 +16,21 @@ public class ConfigurationGeneral {
     @Bean
     public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder,
                                      HypermediaMappingInformation mappingInformation) {
-        ObjectMapper objectMapper = builder.build();
+        var objectMapper = builder.build();
         mappingInformation.configureObjectMapper(objectMapper);
         return objectMapper;
     }
 
     @Bean
     public List<UserData> userList() {
-        return new ArrayList<>();
+        var a =new ArrayList<UserData>(1);
+        a.add(new UserData("YanBean", 2, 3));
+        return a;
+    }
+    @Bean(name = "segundo")
+    public List<UserData> userList2(String name) {
+        var a =new ArrayList<UserData>(1);
+        a.add(new UserData(name, 4, 7));
+        return a;
     }
 }

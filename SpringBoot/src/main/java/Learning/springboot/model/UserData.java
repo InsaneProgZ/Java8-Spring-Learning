@@ -3,32 +3,34 @@ package Learning.springboot.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-@Repository
+@Component
 @EqualsAndHashCode(callSuper = false)
-@Getter
 @Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class UserData extends RepresentationModel<UserData> {
 
     @NotNull
     @Size(min = 1, max = 20)
     @JsonProperty("nome")
-    private @Setter String name;
+    private String name;
 
     @NotNull
     @Positive
     @JsonProperty("idade")
-    private @Setter Integer age;
+    private Integer age;
 
 
     @NotNull
     @Positive
     @JsonProperty("rg")
-    private @Setter Integer rg;
+    private Integer rg;
 }
