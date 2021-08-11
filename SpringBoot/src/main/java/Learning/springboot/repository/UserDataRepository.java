@@ -2,8 +2,6 @@ package Learning.springboot.repository;
 
 
 import Learning.springboot.model.UserData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 @Repository
 public class UserDataRepository {
 
-    @Resource(name = "segundo", )
+    @Resource(name = "segundo")
     private List<UserData> dataList;
 
     public void saveUsers(@NotBlank @NotNull List<UserData> data) {
