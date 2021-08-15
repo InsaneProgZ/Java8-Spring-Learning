@@ -1,7 +1,7 @@
-package Learning.springboot.repository;
+package learning.springboot.repository;
 
 
-import Learning.springboot.model.UserData;
+import learning.springboot.model.UserData;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -36,7 +36,7 @@ public class UserDataRepository {
 
     public Boolean deleteUser(Integer id) {
         List<UserData> dataListToDelete = this.dataList.stream()
-                .filter(data -> data.getAge().equals(id)).collect(Collectors.toList());
+                .filter(data -> data.getAge().equals(id)).toList();
         return dataList.removeAll(dataListToDelete);
     }
 
@@ -46,7 +46,7 @@ public class UserDataRepository {
 
     public UserData getUser(Integer rg) {
 
-        List<UserData> users = dataList.stream().filter(d -> d.getRg().equals(rg)).collect(Collectors.toList());
+        List<UserData> users = dataList.stream().filter(d -> d.getRg().equals(rg)).toList();
 
         return users.isEmpty() ? null : users.get(0);
     }
@@ -54,8 +54,7 @@ public class UserDataRepository {
     public List<UserData> getUserById(Integer rg) {
 
         return dataList.stream()
-                .filter(data -> data.getRg().equals(rg))
-                .collect(Collectors.toList());
+                .filter(data -> data.getRg().equals(rg)).toList();
     }
 
     public void changeUser(UserData data, Integer rg) {

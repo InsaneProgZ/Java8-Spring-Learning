@@ -17,7 +17,6 @@ paths:
         - "user"
       summary: "Return users"
       description: "Return a array of users"
-      operationId: "getUsers"
       produces:
         - "application/json"
       responses:
@@ -27,58 +26,107 @@ paths:
             $ref: "#/definitions/UserList"
         "500":
           description: "Internal Server Error"
-        "404":
+        "204":
           description: "Nenhum usuário foi encontrado"
         "400":
           description: "bad request"
+    post:
+      tags:
+        - "user"
+      summary: "Create users"
+      description: "Return a array of users"
+      consumes:
+        - application/json
+      parameters:
+        - in: query
+          name: user
+          description: The user to create.
+          schema:
+            $ref: '#/definitions/User'
+
+
+      responses:
+        "201":
+          description: "User has been created"
+        "500":
+          description: "Internal Server Error"
+        "204":
+          description: "Nenhum usuário foi encontrado"
+        "400":
+          description: "Bad Request"
+
 
   /user/{id}:
     get:
       tags:
         - "user"
-      summary: "Return user of a specifc id"
-      operationId: "placeOrder"
+      summary: "Return specifc user by id"
       produces:
         - "application/json"
       parameters:
         - name: "id"
           in: "path"
-          description: "ID of pet that needs to be fetched"
+          description: "ID do usuário que deseja resgatar as informações"
           required: true
           type: "integer"
-          format: "int64"
       responses:
         "200":
-          description: "successful operation"
+          description: "Ok"
           schema:
             $ref: "#/definitions/User"
         "400":
           description: "Bad request"
+        "204":
+          description: "id not found"
+        "500":
+          description: "Internal Server error"
+
+    put:
+      tags:
+        - "user"
+      summary: "Modify specifc user by id"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID do usuário que deseja resgatar as informações"
+          required: true
+          schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/User"
+        "400":
+          description: "Bad request"
+        "204":
+          description: "id not found"
+        "500":
+          description: "Internal Server error"
 
     delete:
       tags:
         - "user"
       summary: "Delete user by ID"
       description: "Delete a user with ID"
-      operationId: "deleteOrder"
-      produces:
-        - "application/json"
       parameters:
         - name: "id"
           in: "path"
           description: "ID of the order that needs to be deleted"
           required: true
+          schema:
           type: "integer"
-          format: "int"
       responses:
-        "400":
-          description: "Invalid ID supplied"
-        "404":
-          description: "Order not found"
+        "200":
+          description: "ok"
+        "403":
+          description: "Invalid ID"
+        "500":
+          description: "Internal Server error"
 
 
-openapi:
-components:
 definitions:
 
   User:

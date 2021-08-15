@@ -1,4 +1,4 @@
-package Learning.springboot.model;
+package learning.springboot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -33,4 +33,6 @@ public class UserData extends RepresentationModel<UserData> {
     @Positive
     @JsonProperty("rg")
     private Integer rg;
+
+    private Integer cost;
 }
