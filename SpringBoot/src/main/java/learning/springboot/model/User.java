@@ -5,7 +5,6 @@ import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
@@ -18,18 +17,15 @@ import javax.validation.constraints.Size;
 @Data
 public class User extends RepresentationModel<User> {
 
-    @NotNull
     @Size(min = 1, max = 20)
     @JsonProperty("nome")
     private String name;
 
-    @NotNull
     @Positive
     @JsonProperty("idade")
     private Integer age;
 
 
-    @NotNull
     @Positive
     @JsonProperty("rg")
     private Integer rg;
