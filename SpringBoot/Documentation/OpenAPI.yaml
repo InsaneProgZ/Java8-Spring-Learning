@@ -38,13 +38,11 @@ paths:
       consumes:
         - application/json
       parameters:
-        - in: query
-          name: user
-          description: The user to create.
+        - in: body
+          name: "user"
+          required: true
           schema:
             $ref: '#/definitions/User'
-
-
       responses:
         "201":
           description: "User has been created"
@@ -80,7 +78,6 @@ paths:
           description: "id not found"
         "500":
           description: "Internal Server error"
-
     put:
       tags:
         - "user"
@@ -92,7 +89,6 @@ paths:
           in: "path"
           description: "ID do usuário que deseja resgatar as informações"
           required: true
-          schema:
           type: "integer"
       responses:
         "200":
@@ -116,7 +112,6 @@ paths:
           in: "path"
           description: "ID of the order that needs to be deleted"
           required: true
-          schema:
           type: "integer"
       responses:
         "200":
@@ -125,7 +120,6 @@ paths:
           description: "Invalid ID"
         "500":
           description: "Internal Server error"
-
 
 definitions:
 

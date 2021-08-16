@@ -1,7 +1,7 @@
 package learning.springboot.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import learning.springboot.model.UserData;
+import learning.springboot.model.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.config.HypermediaMappingInformation;
@@ -22,15 +22,9 @@ public class ConfigurationGeneral {
     }
 
     @Bean(name =  "first")
-    public List<UserData> userList() {
-        var a =new ArrayList<UserData>(1);
-        a.add(new UserData("YanBean", 2, 3, 2));
-        return a;
-    }
-    @Bean(name = "second")
-    public List<UserData> userList2(String name) {
-        var a =new ArrayList<UserData>(1);
-        a.add(new UserData(name, 4, 7, 3));
+    public List<User> userList() {
+        var a =new ArrayList<User>(1);
+        a.add(new User("YanBean", 2, 3, 2));
         return a;
     }
 }

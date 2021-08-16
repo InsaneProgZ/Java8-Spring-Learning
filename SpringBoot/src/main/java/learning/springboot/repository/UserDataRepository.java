@@ -1,10 +1,10 @@
 package learning.springboot.repository;
 
 
-import learning.springboot.model.UserData;
+import learning.springboot.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
 @Repository
 public class UserDataRepository {
 
-    @Resource(name = "segundo")
-    private List<UserData> dataList;
+    @Autowired
+    private List<User> dataList;
 
-    public void saveUsers(@NotBlank @NotNull List<UserData> data) {
+    public void saveUsers(@NotBlank @NotNull List<User> data) {
 
         var dataExists = false;
 
-        for (UserData userData : data) {
-            if (dataList.stream().anyMatch(d -> d.getRg().equals(userData.getRg()))) {
+        for (User user : data) {
+            if (dataList.stream().anyMatch(d -> d.getRg().equals(user.getRg()))) {
                 dataExists = true;
                 break;
             }
@@ -35,29 +35,29 @@ public class UserDataRepository {
     }
 
     public Boolean deleteUser(Integer id) {
-        List<UserData> dataListToDelete = this.dataList.stream()
+        List<User> dataListToDelete = this.dataList.stream()
                 .filter(data -> data.getAge().equals(id)).toList();
         return dataList.removeAll(dataListToDelete);
     }
 
-    public List<UserData> getUsers() {
+    public List<User> getUsers() {
         return dataList;
     }
 
-    public UserData getUser(Integer rg) {
+    public User getUser(Integer rg) {
 
-        List<UserData> users = dataList.stream().filter(d -> d.getRg().equals(rg)).toList();
+        List<User> users = dataList.stream().filter(d -> d.getRg().equals(rg)).toList();
 
         return users.isEmpty() ? null : users.get(0);
     }
 
-    public List<UserData> getUserById(Integer rg) {
+    public List<User> getUserById(Integer rg) {
 
         return dataList.stream()
                 .filter(data -> data.getRg().equals(rg)).toList();
     }
 
-    public void changeUser(UserData data, Integer rg) {
+    public void changeUser(User data, Integer rg) {
         dataList = dataList.stream()
                 .map(d -> {
                     if (d.getRg().equals(rg))
@@ -66,7 +66,7 @@ public class UserDataRepository {
                 }).collect(Collectors.toList());
     }
 
-    public void partChangeUserWithoutPatch(UserData data, Integer rg) {
+    public void partChangeUserWithoutPatch(User data, Integer rg) {
         dataList.forEach(d -> {
             if (d.getRg().equals(rg)) {
                 if (data.getName() != null) d. setName(data.getName());

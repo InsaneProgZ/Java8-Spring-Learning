@@ -1,10 +1,10 @@
 package learning.springboot.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
-import learning.springboot.model.UserData;
+import learning.springboot.model.User;
 import learning.springboot.repository.UserDataRepository;
+import learning.springboot.service.UserService;
 import learning.springboot.util.UtilMethods;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -18,16 +18,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/user")
 @Validated
-@AllArgsConstructor()
+@AllArgsConstructor
 public class MainController {
 
     @Autowired
@@ -36,66 +32,46 @@ public class MainController {
     @Autowired
     private final UtilMethods utilMethods;
 
+    @Autowired
+    private final UserService userService;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @GetMapping(produces = {"application/hal+json"})
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<UserData> showAllUsers() {
-
-        List<UserData> userList = new ArrayList<>(userDAO.getUsers());
-
-        userList.forEach(data -> data.add(linkTo(methodOn(MainController.class).showUserInfoById(data.getRg())).withRel("get")));
-
-        var selfLink = linkTo(methodOn(MainController.class).showAllUsers()).withSelfRel();
-
-        logger.info("m=showAllUsers  userList={} ", userList);
-
-        return CollectionModel.of(userList, selfLink);
+    public CollectionModel<User> showAllUsers() {
+        return userService.getAllUsers();
     }
+
 
     @GetMapping(value = "/{rg}")
     @ResponseStatus(HttpStatus.OK)
-    public EntityModel<UserData> showUserInfoById(@PathVariable int rg) {
-        var user = userDAO.getUser(rg);
-        user.add(linkTo(methodOn(MainController.class).showAllUsers()).withRel("/user"));
-
-        logger.info("m=showUserInfo  user={} ", user);
-        return EntityModel.of(user);
+    public EntityModel<User> showUserInfoById(@PathVariable int rg) {
+        return userService.getUserById(rg);
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void createUSers (@RequestBody @Valid List<UserData> userList) {
-        userDAO.saveUsers(userList);
-        logger.info("m=createUsers  users={} ", userList);
+    public void createUsers(@RequestBody @Valid List<User> userList) {
+        userService.SaveUser(userList);
     }
 
     @DeleteMapping("/{rg}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUserById(@PathVariable("rg") Integer rg) {
-
-        logger.info("m=deleteUserById  rg={} ", rg);
-        userDAO.deleteUser(rg);
+        userService.deleteUser(rg);
     }
 
     @PutMapping("/{rg}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateUser(@PathVariable("rg") Integer rg, @RequestBody @Valid UserData user) {
-
-        logger.info("m=updateUser  rg={} updatedUser={}", rg, user);
-        userDAO.changeUser(user, rg);
+    public void updateUser(@PathVariable("rg") Integer rg, @RequestBody @Valid User user) {
+        userService.updateUser(rg, user);
     }
 
     @PatchMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserData> updateCustomer(@PathVariable Integer id, @RequestBody JsonPatch patch) throws JsonPatchException {
-        try {
-            UserData customer = userDAO.getUser(id);
-            UserData customerPatched = utilMethods.applyPatchToCustomer(patch, customer);
-            userDAO.changeUser(customerPatched, id);
-            return ResponseEntity.ok(customerPatched);
-        } catch (JsonPatchException | JsonProcessingException e) {
-            throw new JsonPatchException("JsonPatch exception");
-        }
+    public ResponseEntity<User> updateCustomer(@PathVariable Integer id, @RequestBody JsonPatch patch) throws JsonPatchException {
+
+        return new ResponseEntity<>(userService.updateCustomer(id, patch), HttpStatus.OK);
     }
 }

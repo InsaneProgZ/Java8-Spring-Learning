@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserData extends RepresentationModel<UserData> {
+public class User extends RepresentationModel<User> {
 
     @NotNull
     @Size(min = 1, max = 20)
