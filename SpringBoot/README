@@ -1,0 +1,7 @@
+-  Cria a imagem no docker do projeto
+
+>docker build -t learning:latest .
+
+-  Roda o projeto localmente na porta 8080
+
+>docker run -p 8080:8080 learning

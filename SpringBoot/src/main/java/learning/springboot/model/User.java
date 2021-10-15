@@ -2,20 +2,18 @@ package learning.springboot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.stereotype.Component;
-
+import javax.persistence.Entity;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
-@Component
+@Entity
 @EqualsAndHashCode(callSuper = false)
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class User extends RepresentationModel<User> {
+public class User {
 
     @Size(min = 1, max = 20)
     @JsonProperty("nome")
